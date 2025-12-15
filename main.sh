@@ -1,23 +1,29 @@
 #!/bin/bash
 
-SCRIPT_DIR=$(cd $(dirname $0); pwd)
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 LOG_FILE="$SCRIPT_DIR/log/error.log"
 
 notify_disconnect() {
-    osascript -e 'display notification "インターネット接続が切れてませんか？ネットワークを確認してください。" with title "通信エラーです"'
+    /usr/bin/osascript -e \
+        'display notification "インターネット接続が切れてませんか？ネットワークを確認してください。" with title "通信エラーです"'
 }
 
 log() {
-    local message="$1"
-    echo "$(date +'%Y-%m-%d %H:%M:%S') - ${message}" >> "$LOG_FILE"
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOG_FILE"
 }
 
-PING_OUTPUT=$(/sbin/ping -c1 www.google.com 2>&1)
-PING_EXIT_CODE=$?
-if [ $PING_EXIT_CODE -ne 0 ]; then
-    log "ping failed with exit code $PING_EXIT_CODE"
-    log "$PING_OUTPUT"
-    notify_disconnect
+# ネットワーク有無のみの確認
+if ! /sbin/ping -c1 -t1 8.8.8.8 >/dev/null 2>&1; then
+  log "ネットワークにアクセスできません"
+  exit 0
 fi
 
+# 
+for i in 1 2 3; do
+  /sbin/ping -c1 -t1 jpsern.com >/dev/null 2>&1 && exit 0
+  sleep 5
+done
+
+log "再試行しましたが通信に失敗しました"
+notify_disconnect
 
