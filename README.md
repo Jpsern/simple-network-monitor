@@ -1,20 +1,26 @@
 # Simple Network Monitor
 
+## 概要
+ネットに繋がるかどうかを確認するための簡単なツールです。実行するとネットに繋がるかを確認し、問題があればその旨を通知します。
+![通知](/docs/img/notify.png)
+
+## 実行環境
+- macOS Sequoia 15.6.1
+- GNU bash 3.2.57
+
+Macならだいたい動くとは思います。
+
 ## 基本的な使い方
 1. `.env.example` をコピーして `.env` を作成し、必須の `SERVICE_HOST` を設定します。
    ```bash
    cp .env.example .env
    echo "SERVICE_HOST=example.com" >> .env  # 監視対象ホストを指定
    ```
-2. スクリプトに実行権限がない場合は付与します（初回のみ）。
-   ```bash
-   chmod +x ./main.sh
-   ```
-3. 実行します。
+2. 実行します。
    ```bash
    ./main.sh
    ```
-4. ログ出力先はデフォルトで `log/error.log` です。必要に応じて `.env` で `LOG_DIR` や `LOG_FILE` を変更できます。
+3. ログ出力先はデフォルトで `log/error.log` です。必要に応じて `.env` で `LOG_DIR` や `LOG_FILE` を変更できます。
 
 ## 応用
 ### cronで定期実行
